@@ -12,7 +12,7 @@ Recitation2 is an early prototype for exploring Arabic text and study workflows.
 
 Requirements: Python 3.10+, Node.js, and npm.
 
-1. In `backend`, create a virtual environment, activate it, install `requirements.txt`, and run `uvicorn app.main:app --reload --host 127.0.0.1 --port 8000`.
+1. In `backend`, create a virtual environment, activate it, install `requirements.txt`, copy `.env.example` to `.env`, and set `SECRET_KEY` to a long random value before starting the API with `uvicorn app.main:app --reload --host 127.0.0.1 --port 8000`.
 2. In a second terminal, run `npm install` and `npm run dev` from `frontend`.
 3. Open the local URL reported by Vite.
 
