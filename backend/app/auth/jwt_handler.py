@@ -3,11 +3,11 @@ from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from app.core.db import get_db_connection
+from app.core.config import settings
 import bcrypt
-import os
 
 # Security constants
-SECRET_KEY = os.getenv("SECRET_KEY", "super_secret_dev_key_do_not_use_in_prod")
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -19,6 +19,8 @@ def get_password_hash(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
+    if not SECRET_KEY:
+        raise RuntimeError("Set SECRET_KEY in backend/.env before using authentication.")
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -29,6 +31,8 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
+    if not SECRET_KEY:
+        raise RuntimeError("Set SECRET_KEY in backend/.env before using authentication.")
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -52,4 +56,3 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         return dict(user)
     finally:
         conn.close()
-
