@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # Graph Database for Isnad Chains and Entities
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    ports:
+      - "8000:8000"
+    command: start --log trace --user root --pass root file://data/surrealdb.db
+    volumes:
+      - surrealdb-data:/data
+
+  # Relational & Vector Database for RAG (PostgreSQL + pgvector)
+  postgres:
+    image: ankane/pgvector:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: arabic_docs
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  surrealdb-data:
+  postgres-data:
